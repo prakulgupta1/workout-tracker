@@ -1,117 +1,92 @@
-"use client";
 import { useState } from "react";
 
-export default function BMRCalculator() {
-  const [weight, setWeight] = useState("150");
-  const [height, setHeight] = useState("65");
-  const [age, setAge] = useState("25");
+function BMRCalculator() {
+  const [age, setAge] = useState(25);
   const [gender, setGender] = useState("male");
-  const [bmr, setBmr] = useState(null);
-  const [error, setError] = useState(null);
+  const [height, setHeight] = useState(170);
+  const [weight, setWeight] = useState(65);
+  const [bmr, setBMR] = useState(null);
 
   const calculateBMR = () => {
-    const w = parseFloat(weight);
-    const h = parseFloat(height);
-    const a = parseFloat(age);
-
-    if (!w || !h || !a || w <= 0 || h <= 0 || a <= 0) {
-      setError("Please enter valid values.");
-      setBmr(null);
-      return;
-    }
-
     let result;
     if (gender === "male") {
-      result = 66 + 6.23 * w + 12.7 * h - 6.8 * a;
+      result = 88.36 + 13.4 * weight + 4.8 * height - 5.7 * age;
     } else {
-      result = 655 + 4.35 * w + 4.7 * h - 4.7 * a;
+      result = 447.6 + 9.2 * weight + 3.1 * height - 4.3 * age;
     }
-
-    setBmr(result.toFixed(2));
-    setError(null);
+    setBMR(result.toFixed(2));
   };
 
   return (
-    <div>
-      <h1 className="text-3xl text-slate-500 text-center pb-6">BMR Calculator</h1>
-
+    <div className="min-h-screen pt-24 pb-16 px-4 bg-slate-100 text-slate-800">
+      <h1 className="text-3xl font-bold text-center mb-8 text-primary">
+        BMR Calculator
+      </h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           calculateBMR();
         }}
-        className="bg-white border w-[90%] mx-auto flex flex-col items-start justify-center gap-6 rounded-md shadow-xl p-8 max-w-[600px]"
+        className="bg-white max-w-xl mx-auto p-8 rounded-xl shadow-xl space-y-6"
       >
-        <label className="font-semibold">
-          Weight (lbs):
-          <input
-            type="number"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            className="text-xl ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
-          />
-        </label>
-
-        <label className="font-semibold">
-          Height (in):
-          <input
-            type="number"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-            className="text-xl ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
-          />
-        </label>
-
-        <label className="font-semibold">
-          Age:
-          <input
-            type="number"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            className="text-xl ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
-          />
-        </label>
-
-        <label className="font-semibold">
-          Gender:
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Gender</label>
           <select
+            className="p-2 rounded-md bg-highlights/30 focus:outline-none"
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-            className="ml-2 p-1 rounded-full bg-highlights/80"
           >
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-        </label>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Age (years)</label>
+          <input
+            type="number"
+            className="p-2 rounded-md bg-highlights/30 focus:outline-none text-center"
+            value={age}
+            onChange={(e) => setAge(Number(e.target.value))}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Height (cm)</label>
+          <input
+            type="number"
+            className="p-2 rounded-md bg-highlights/30 focus:outline-none text-center"
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Weight (kg)</label>
+          <input
+            type="number"
+            className="p-2 rounded-md bg-highlights/30 focus:outline-none text-center"
+            value={weight}
+            onChange={(e) => setWeight(Number(e.target.value))}
+          />
+        </div>
 
         <button
           type="submit"
-          className="bg-primary p-4 rounded-full shadow-xl text-white text-center hover:bg-primary/80 hover:translate-y-1 px-8"
+          className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primary/80 transition-all mt-4 shadow-md"
         >
           Calculate BMR
         </button>
       </form>
 
-      {error && <p className="text-red-500 text-center mt-4 font-semibold">{error}</p>}
-
       {bmr && (
-        <div className="bg-white border w-[90%] max-w-[600px] mx-auto rounded-md shadow-xl p-6 my-12">
-          <table className="w-full text-center">
-            <thead>
-              <tr className="border-b-2 border-b-highlights">
-                <th className="py-3 pl-2 text-left">Parameter</th>
-                <th className="py-3">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-primary/20">
-                <td className="py-3 pl-2 font-semibold text-primary text-left">BMR</td>
-                <td className="py-3">{bmr} calories/day</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="mt-10 max-w-xl mx-auto bg-white p-6 rounded-xl shadow-xl text-center">
+          <h2 className="text-xl font-semibold text-primary">Your BMR</h2>
+          <p className="text-3xl font-bold text-secondary mt-2">{bmr} kcal/day</p>
         </div>
       )}
     </div>
   );
 }
+
+export default BMRCalculator;
