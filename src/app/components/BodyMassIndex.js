@@ -1,117 +1,67 @@
+"use client";
 import { useState } from "react";
 
-function BodyMassIndex() {
-  const [height, setHeight] = useState("65");
-  const [weight, setWeight] = useState("150");
+const BodyMassIndex = () => {
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
   const [bmi, setBmi] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [error, setError] = useState(null);
+  const [status, setStatus] = useState("");
 
   const calculateBMI = () => {
     const h = parseFloat(height);
     const w = parseFloat(weight);
+    if (!h || !w) return;
 
-    if (!h || !w || h <= 0 || w <= 0) {
-      setError("Please enter valid height and weight.");
-      setBmi(null);
-      setStatus(null);
-      return;
-    }
+    const heightInMeters = h * 0.0254;
+    const bmiValue = w / (heightInMeters * heightInMeters);
+    setBmi(bmiValue.toFixed(1));
 
-    const bmiValue = (w * 703) / (h * h);
-    setBmi(bmiValue.toFixed(2));
-    setError(null);
-
-    // Weight status based on BMI
     if (bmiValue < 18.5) setStatus("Underweight");
-    else if (bmiValue < 24.9) setStatus("Normal weight");
-    else if (bmiValue < 29.9) setStatus("Overweight");
+    else if (bmiValue < 25) setStatus("Normal");
+    else if (bmiValue < 30) setStatus("Overweight");
     else setStatus("Obese");
   };
 
   return (
-    <div>
-      <h1 className="text-3xl text-slate-500 text-center pb-6">
-        BMI Calculator
-      </h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          calculateBMI();
-        }}
-        className="bg-white border w-[90%] mx-auto 
-          flex flex-col items-start justify-center gap-6
-          rounded-md shadow-xl p-8 max-w-[600px]"
-      >
-        <label className="font-semibold">
-          Height:
+    <div className="bg-white shadow-xl rounded-lg p-6 max-w-xl mx-auto w-[90%] my-10">
+      <h2 className="text-2xl font-bold text-primary text-center mb-4">
+        Body Mass Index (BMI)
+      </h2>
+      <div className="space-y-4">
+        <div>
+          <label className="block font-semibold text-gray-700">Height (inches)</label>
           <input
-            type="text"
+            type="number"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            className="text-xl ml-2 mr-2 font-mono w-[80px] text-center
-              focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           />
-          in
-        </label>
-
-        <label className="font-semibold">
-          Weight:
+        </div>
+        <div>
+          <label className="block font-semibold text-gray-700">Weight (lbs)</label>
           <input
-            type="text"
+            type="number"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="text-xl ml-2 mr-2 font-mono w-[80px] text-center
-              focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           />
-          lbs
-        </label>
-
+        </div>
         <button
-          type="submit"
-          className="bg-primary p-4 rounded-full shadow-xl text-white text-center
-            hover:bg-primary/80 hover:translate-y-1 px-8"
+          onClick={calculateBMI}
+          className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 transition"
         >
           Calculate BMI
         </button>
-      </form>
-
-      {error && (
-        <p className="text-red-500 text-center mt-4 font-semibold">{error}</p>
-      )}
+      </div>
 
       {bmi && (
-        <div
-          className="bg-white border w-[90%] max-w-[600px] mx-auto 
-            rounded-md shadow-xl p-6 my-12"
-        >
-          <table className="w-full text-center ">
-            <thead>
-              <tr className="border-b-2 border-b-highlights">
-                <th className="py-3 pl-2 text-left">Parameter</th>
-                <th className="py-3">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-primary/20">
-                <td className="py-3 pl-2 font-semibold text-primary text-left">
-                  BMI
-                </td>
-                <td className="py-3">{bmi}</td>
-              </tr>
-              <tr>
-                <td className="py-3 pl-2 font-semibold text-primary text-left">
-                  Weight Status
-                </td>
-                <td className="py-3">{status}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="mt-6 text-center bg-highlights/10 p-4 rounded">
+          <p className="text-xl font-semibold text-primary">BMI: {bmi}</p>
+          <p className="text-lg font-medium text-secondary">Status: {status}</p>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default BodyMassIndex;

@@ -1,126 +1,106 @@
 "use client";
 import { useState } from "react";
 
-export default function BodyFatCalculator() {
+const BodyFatCalculator = () => {
   const [gender, setGender] = useState("male");
-  const [waist, setWaist] = useState("");
-  const [neck, setNeck] = useState("");
   const [height, setHeight] = useState("");
+  const [neck, setNeck] = useState("");
+  const [waist, setWaist] = useState("");
   const [hip, setHip] = useState("");
-  const [result, setResult] = useState(null);
+  const [bodyFat, setBodyFat] = useState(null);
 
   const calculateBodyFat = () => {
     const h = parseFloat(height);
-    const w = parseFloat(waist);
     const n = parseFloat(neck);
+    const w = parseFloat(waist);
     const hp = parseFloat(hip);
 
+    if (!h || !n || !w || (gender === "female" && !hp)) return;
+
+    let bf = 0;
     if (gender === "male") {
-      if (!h || !w || !n) return;
-      const bodyFat =
-        86.010 * Math.log10(w - n) - 70.041 * Math.log10(h) + 36.76;
-      setResult(bodyFat.toFixed(2) + "%");
+      bf = 495 / (1.0324 - 0.19077 * Math.log10(w - n) + 0.15456 * Math.log10(h)) - 450;
     } else {
-      if (!h || !w || !n || !hp) return;
-      const bodyFat =
-        163.205 * Math.log10(w + hp - n) -
-        97.684 * Math.log10(h) -
-        78.387;
-      setResult(bodyFat.toFixed(2) + "%");
+      bf = 495 / (1.29579 - 0.35004 * Math.log10(w + hp - n) + 0.221 * Math.log10(h)) - 450;
     }
+
+    setBodyFat(bf.toFixed(1));
   };
 
   return (
-    <div>
-      <h1 className="text-3xl text-slate-500 text-center pb-6">Body Fat % Calculator</h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          calculateBodyFat();
-        }}
-        className="bg-white border w-[90%] mx-auto flex flex-col items-start justify-center gap-6 rounded-md shadow-xl p-8 max-w-[600px]"
-      >
-        <label className="font-semibold">
-          Gender:
+    <div className="bg-white shadow-xl rounded-lg p-6 max-w-xl mx-auto w-[90%] my-10">
+      <h2 className="text-2xl font-bold text-primary text-center mb-4">
+        Body Fat Percentage
+      </h2>
+      <div className="space-y-4">
+        <div>
+          <label className="block font-semibold text-gray-700">Gender</label>
           <select
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-            className="ml-2 p-1 rounded-full bg-highlights/80"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           >
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-        </label>
-
-        <label className="font-semibold">
-          Height (in):
+        </div>
+        <div>
+          <label className="block font-semibold text-gray-700">Height (cm)</label>
           <input
             type="number"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            className="ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           />
-        </label>
-
-        <label className="font-semibold">
-          Neck (in):
+        </div>
+        <div>
+          <label className="block font-semibold text-gray-700">Neck (cm)</label>
           <input
             type="number"
             value={neck}
             onChange={(e) => setNeck(e.target.value)}
-            className="ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           />
-        </label>
-
-        <label className="font-semibold">
-          Waist (in):
+        </div>
+        <div>
+          <label className="block font-semibold text-gray-700">Waist (cm)</label>
           <input
             type="number"
             value={waist}
             onChange={(e) => setWaist(e.target.value)}
-            className="ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+            className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
           />
-        </label>
-
+        </div>
         {gender === "female" && (
-          <label className="font-semibold">
-            Hip (in):
+          <div>
+            <label className="block font-semibold text-gray-700">Hip (cm)</label>
             <input
               type="number"
               value={hip}
               onChange={(e) => setHip(e.target.value)}
-              className="ml-2 font-mono w-[80px] text-center focus:bg-highlights bg-highlights/80 py-1 rounded-full"
+              className="w-full p-2 mt-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-highlights"
             />
-          </label>
+          </div>
         )}
-
         <button
-          type="submit"
-          className="bg-primary p-4 rounded-full shadow-xl text-white text-center hover:bg-primary/80 hover:translate-y-1 px-8"
+          onClick={calculateBodyFat}
+          className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 transition"
         >
           Calculate Body Fat %
         </button>
-      </form>
+      </div>
 
-      {result && (
-        <div className="bg-white border w-[90%] max-w-[600px] mx-auto rounded-md shadow-xl p-6 my-12">
-          <table className="w-full text-center">
-            <thead>
-              <tr className="border-b-2 border-b-highlights">
-                <th className="py-3 pl-2 text-left">Parameter</th>
-                <th className="py-3">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-primary/20">
-                <td className="py-3 pl-2 font-semibold text-primary text-left">Body Fat %</td>
-                <td className="py-3">{result}</td>
-              </tr>
-            </tbody>
-          </table>
+      {bodyFat && (
+        <div className="mt-6 text-center bg-highlights/10 p-4 rounded">
+          <p className="text-xl font-semibold text-primary">
+            Body Fat: {bodyFat}%
+          </p>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default BodyFatCalculator;
+
+
